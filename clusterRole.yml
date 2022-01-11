@@ -1,0 +1,43 @@
+# Grant some permissions to Prometheus to access pods, endpoints, and services running in your cluster.
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRole
+metadata:
+  name: prometheus
+rules:
+- apiGroups: [""]
+  resources:
+  - nodes
+  - services
+  - endpoints
+  - pods
+  verbs: ["get", "list", "watch"]
+- apiGroups: [""]
+  resources:
+  - configmaps
+  verbs: ["get"]
+- nonResourceURLs: ["/metrics"]
+  verbs: ["get"]
+
+---
+# Create a service account for Prometheus to represent its identity in the cluster.
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: prometheus
+
+---
+# Bind Service account and Cluster Role using ClusterRoleBinding resource. It allows associating a list of users, groups, or service account with a specific role.
+
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: prometheus
+roleRef:
+  apiGroups: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: prometheus
+subjects:
+- kind: ServiceAccount
+  name: prometheus
+  namespace: default
