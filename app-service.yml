@@ -6,10 +6,8 @@ metadata:
     app: rpc-app
   spec:
     ports:
-    - name: web
       port: 8081
       targetPort: 8081
-      protocol: TCP
     selector:
       app: rpc-app
-    type: NodePort
+    type: LoadBalancer
